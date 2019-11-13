@@ -12,6 +12,10 @@ const useStyles = makeStyles({
   card: {
     minWidth: 300,
   },
+  time: {
+    fontSize: 40,
+    textAlign: 'center',
+  },
 });
 
 interface TimerProps {
@@ -27,8 +31,8 @@ const TimerComponent: FC<TimerProps> = ({ timeLeft, reset }) => {
     <>
       <Card className={classes.card}>
         <CardContent>
-          <Typography>
-            {Math.floor(timeLeft / 60)}:{timeLeft % 60}
+          <Typography className={classes.time}>
+            {Math.floor(timeLeft / 60)}:{('00' + (timeLeft % 60)).slice(-2)}
           </Typography>
         </CardContent>
         <CardActions>
