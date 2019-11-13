@@ -20,11 +20,12 @@ const useStyles = makeStyles({
 
 interface TimerProps {
   timeLeft: number;
-  /* pause: () => void; */
+  start: () => void;
+  stop: () => void;
   reset: () => void;
 }
 
-const TimerComponent: FC<TimerProps> = ({ timeLeft, reset }) => {
+const TimerComponent: FC<TimerProps> = ({ timeLeft, start, stop, reset }) => {
   const classes = useStyles();
 
   return (
@@ -36,6 +37,8 @@ const TimerComponent: FC<TimerProps> = ({ timeLeft, reset }) => {
           </Typography>
         </CardContent>
         <CardActions>
+          <Button onClick={start}>Start</Button>
+          <Button onClick={stop}>Stop</Button>
           <Button onClick={reset}>Reset</Button>
         </CardActions>
       </Card>
