@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ChangeEvent } from 'react';
 
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -16,6 +16,7 @@ const useStyles = makeStyles({
   time: {
     fontSize: 40,
     textAlign: 'center',
+    display: 'block',
   },
   textField: {
     marginLeft: 1,
@@ -27,12 +28,21 @@ const useStyles = makeStyles({
 
 interface TimerProps {
   timeLeft: number;
+  workMinutes: number;
   start: () => void;
   stop: () => void;
   reset: () => void;
+  handleChangeTimeLeft: (ev: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TimerComponent: FC<TimerProps> = ({ timeLeft, start, stop, reset }) => {
+const TimerComponent: FC<TimerProps> = ({
+  timeLeft,
+  workMinutes,
+  start,
+  stop,
+  reset,
+  handleChangeTimeLeft,
+}) => {
   const classes = useStyles();
 
   return (
@@ -47,7 +57,8 @@ const TimerComponent: FC<TimerProps> = ({ timeLeft, start, stop, reset }) => {
             className={classes.textField}
             label="Work [min]"
             type="number"
-            defaultValue={25}
+            defaultValue={workMinutes}
+            onChange={handleChangeTimeLeft}
           />
           <TextField
             className={classes.textField}

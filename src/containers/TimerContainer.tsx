@@ -1,19 +1,29 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, ChangeEvent } from 'react';
 
 import TimerComponent from 'components/TimerComponent';
 
 const useTimer = (
-  limitSec: number,
-): [number, () => void, () => void, () => void] => {
-  const [timeLeft, setTimeLeft] = useState(limitSec);
+  workMinutes: number,
+  intervalMinutes: number,
+  maxRepeatCount: number,
+): [
+  number,
+  number,
+  () => void,
+  () => void,
+  () => void,
+  (ev: ChangeEvent<HTMLInputElement>) => void,
+] => {
+  const [limitMin, setLimitMin] = useState(workMinutes);
+  const [timeLeft, setTimeLeft] = useState(workMinutes * 60);
   const [timerId, setTimerId] = useState();
 
   const reset = () => {
-    setTimeLeft(limitSec);
+    setTimeLeft(limitMin * 60);
   };
 
   const tick = () => {
-    setTimeLeft(prevTime => (prevTime === 0 ? limitSec : prevTime - 1));
+    setTimeLeft(prevTime => (prevTime === 0 ? limitMin * 60 : prevTime - 1));
   };
 
   const start = () => {
@@ -25,24 +35,42 @@ const useTimer = (
     clearInterval(timerId);
   };
 
+  const handleChangeTimeLeft = (ev: ChangeEvent<HTMLInputElement>) => {
+    ev.preventDefault();
+    setLimitMin(parseInt(ev.currentTarget.value));
+  };
+
   useEffect(() => {
+    setTimeLeft(limitMin * 60);
     return () => clearInterval(timerId);
     // eslint-disable-next-line
-  }, []);
+  }, [limitMin]);
 
-  return [timeLeft, start, stop, reset];
+  return [timeLeft, workMinutes, start, stop, reset, handleChangeTimeLeft];
 };
 
 const TimerContainer: FC = () => {
-  const LIMIT = 60;
-  const [timeLeft, start, stop, reset] = useTimer(LIMIT);
+  const WORK_MINUTES = 25;
+  const INTERVAL_MINUTES = 5;
+  const REPEAT = 4;
+
+  const [
+    timeLeft,
+    workMinutes,
+    start,
+    stop,
+    reset,
+    handleChangeTimeLeft,
+  ] = useTimer(WORK_MINUTES, INTERVAL_MINUTES, REPEAT);
 
   return (
     <TimerComponent
       timeLeft={timeLeft}
+      workMinutes={workMinutes}
       start={start}
       stop={stop}
       reset={reset}
+      handleChangeTimeLeft={handleChangeTimeLeft}
     />
   );
 };
