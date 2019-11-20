@@ -41,10 +41,21 @@ const useTimer = (
   };
 
   useEffect(() => {
-    setTimeLeft(limitMin * 60);
+    if (Number.isNaN(limitMin)) {
+      setTimeLeft(0);
+    } else {
+      setTimeLeft(limitMin * 60);
+    }
     return () => clearInterval(timerId);
     // eslint-disable-next-line
   }, [limitMin]);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      clearInterval(timerId);
+    }
+    // eslint-disable-next-line
+  }, [timeLeft]);
 
   return [timeLeft, workMinutes, start, stop, reset, handleChangeTimeLeft];
 };
