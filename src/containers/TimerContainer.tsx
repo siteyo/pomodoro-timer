@@ -2,18 +2,23 @@ import React, { FC, useEffect, useState } from 'react';
 
 import TimerComponent from 'components/TimerComponent';
 
-const useTimer = (
-  limitSec: number,
-): [number, () => void, () => void, () => void] => {
-  const [timeLeft, setTimeLeft] = useState(limitSec);
-  const [timerId, setTimerId] = useState();
+const TimerContainer: FC = () => {
+  const WORK_MINUTES = 25;
+  const INTERVAL_MINUTES = 5;
+  const REPEAT = 4;
 
-  const reset = () => {
-    setTimeLeft(limitSec);
-  };
+  const [inputValues, setInputValues] = useState({
+    workMinutes: WORK_MINUTES,
+    intervalMinutes: INTERVAL_MINUTES,
+    repeatCount: REPEAT,
+  });
+  const [timeLeft, setTimeLeft] = useState(WORK_MINUTES * 60);
+  const [repeatCount, setRepeatCount] = useState(0);
+  const [timerId, setTimerId] = useState();
+  const [isWorkTime, setIsWorkTime] = useState(true);
 
   const tick = () => {
-    setTimeLeft(prevTime => (prevTime === 0 ? limitSec : prevTime - 1));
+    setTimeLeft(prevTime => prevTime - 1);
   };
 
   const start = () => {
@@ -25,17 +30,33 @@ const useTimer = (
     clearInterval(timerId);
   };
 
+  const reset = () => {
+    setTimeLeft(inputValues.workMinutes * 60);
+    setIsWorkTime(true);
+    setRepeatCount(0);
+  };
+
+  const handleChange = (targetName: string, newValue: number) => {
+    setInputValues(v => ({ ...v, [targetName]: newValue }));
+  };
+
   useEffect(() => {
-    return () => clearInterval(timerId);
-    // eslint-disable-next-line
-  }, []);
+    setTimeLeft(inputValues.workMinutes * 60);
+    setIsWorkTime(true);
+    setRepeatCount(0);
+  }, [inputValues]);
 
-  return [timeLeft, start, stop, reset];
-};
-
-const TimerContainer: FC = () => {
-  const LIMIT = 60;
-  const [timeLeft, start, stop, reset] = useTimer(LIMIT);
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setIsWorkTime(prev => !prev);
+      if (isWorkTime) {
+        setRepeatCount(prev => prev + 1);
+        setTimeLeft(inputValues.intervalMinutes * 60);
+      } else {
+        setTimeLeft(inputValues.workMinutes * 60);
+      }
+    }
+  }, [timeLeft]);
 
   return (
     <TimerComponent
@@ -43,6 +64,8 @@ const TimerContainer: FC = () => {
       start={start}
       stop={stop}
       reset={reset}
+      inputValues={inputValues}
+      handleChange={handleChange}
     />
   );
 };

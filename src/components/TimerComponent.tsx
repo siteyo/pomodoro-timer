@@ -6,6 +6,8 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
+import TextFieldComponent from 'components/TextFieldComponent';
+
 import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
@@ -15,6 +17,7 @@ const useStyles = makeStyles({
   time: {
     fontSize: 40,
     textAlign: 'center',
+    display: 'block',
   },
 });
 
@@ -23,9 +26,23 @@ interface TimerProps {
   start: () => void;
   stop: () => void;
   reset: () => void;
+  inputValues: {
+    workMinutes: number;
+    intervalMinutes: number;
+    repeatCount: number;
+  };
+  handleChange: (targetName: string, newValue: number) => void;
 }
 
-const TimerComponent: FC<TimerProps> = ({ timeLeft, start, stop, reset }) => {
+const TimerComponent: FC<TimerProps> = ({
+  timeLeft,
+  workMinutes,
+  start,
+  stop,
+  reset,
+  inputValues,
+  handleChange,
+}) => {
   const classes = useStyles();
 
   return (
@@ -35,6 +52,24 @@ const TimerComponent: FC<TimerProps> = ({ timeLeft, start, stop, reset }) => {
           <Typography className={classes.time}>
             {Math.floor(timeLeft / 60)}:{('00' + (timeLeft % 60)).slice(-2)}
           </Typography>
+          <TextFieldComponent
+            handleChange={handleChange}
+            targetName="workMinutes"
+            label="Work [min]"
+            value={inputValues.workMinutes}
+          />
+          <TextFieldComponent
+            handleChange={handleChange}
+            targetName="intervalMinutes"
+            label="Interval [min]"
+            value={inputValues.intervalMinutes}
+          />
+          <TextFieldComponent
+            handleChange={handleChange}
+            targetName="repeatCount"
+            label="Repeat"
+            value={inputValues.repeatCount}
+          />
         </CardContent>
         <CardActions>
           <Button onClick={start}>Start</Button>
