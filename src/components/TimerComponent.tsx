@@ -36,7 +36,6 @@ interface TimerProps {
 
 const TimerComponent: FC<TimerProps> = ({
   timeLeft,
-  workMinutes,
   start,
   stop,
   reset,
