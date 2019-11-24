@@ -1,29 +1,24 @@
-import React, { FC, useEffect, useState, ChangeEvent } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import TimerComponent from 'components/TimerComponent';
 
-const useTimer = (
-  workMinutes: number,
-  intervalMinutes: number,
-  maxRepeatCount: number,
-): [
-  number,
-  number,
-  () => void,
-  () => void,
-  () => void,
-  (ev: ChangeEvent<HTMLInputElement>) => void,
-] => {
-  const [limitMin, setLimitMin] = useState(workMinutes);
-  const [timeLeft, setTimeLeft] = useState(workMinutes * 60);
-  const [timerId, setTimerId] = useState();
+const TimerContainer: FC = () => {
+  const WORK_MINUTES = 25;
+  const INTERVAL_MINUTES = 5;
+  const REPEAT = 4;
 
-  const reset = () => {
-    setTimeLeft(limitMin * 60);
-  };
+  const [inputValues, setInputValues] = useState({
+    workMinutes: WORK_MINUTES,
+    intervalMinutes: INTERVAL_MINUTES,
+    repeatCount: REPEAT,
+  });
+  const [timeLeft, setTimeLeft] = useState(WORK_MINUTES * 60);
+  const [repeatCount, setRepeatCount] = useState(0);
+  const [timerId, setTimerId] = useState();
+  const [isWorkTime, setIsWorkTime] = useState(true);
 
   const tick = () => {
-    setTimeLeft(prevTime => (prevTime === 0 ? limitMin * 60 : prevTime - 1));
+    setTimeLeft(prevTime => prevTime - 1);
   };
 
   const start = () => {
@@ -35,53 +30,42 @@ const useTimer = (
     clearInterval(timerId);
   };
 
-  const handleChangeTimeLeft = (ev: ChangeEvent<HTMLInputElement>) => {
-    ev.preventDefault();
-    setLimitMin(parseInt(ev.currentTarget.value));
+  const reset = () => {
+    setTimeLeft(inputValues.workMinutes * 60);
+    setIsWorkTime(true);
+    setRepeatCount(0);
+  };
+
+  const handleChange = (targetName: string, newValue: number) => {
+    setInputValues(v => ({ ...v, [targetName]: newValue }));
   };
 
   useEffect(() => {
-    if (Number.isNaN(limitMin)) {
-      setTimeLeft(0);
-    } else {
-      setTimeLeft(limitMin * 60);
-    }
-    return () => clearInterval(timerId);
-    // eslint-disable-next-line
-  }, [limitMin]);
+    setTimeLeft(inputValues.workMinutes * 60);
+    setIsWorkTime(true);
+    setRepeatCount(0);
+  }, [inputValues]);
 
   useEffect(() => {
     if (timeLeft === 0) {
-      clearInterval(timerId);
+      setIsWorkTime(prev => !prev);
+      if (isWorkTime) {
+        setRepeatCount(prev => prev + 1);
+        setTimeLeft(inputValues.intervalMinutes * 60);
+      } else {
+        setTimeLeft(inputValues.workMinutes * 60);
+      }
     }
-    // eslint-disable-next-line
   }, [timeLeft]);
-
-  return [timeLeft, workMinutes, start, stop, reset, handleChangeTimeLeft];
-};
-
-const TimerContainer: FC = () => {
-  const WORK_MINUTES = 25;
-  const INTERVAL_MINUTES = 5;
-  const REPEAT = 4;
-
-  const [
-    timeLeft,
-    workMinutes,
-    start,
-    stop,
-    reset,
-    handleChangeTimeLeft,
-  ] = useTimer(WORK_MINUTES, INTERVAL_MINUTES, REPEAT);
 
   return (
     <TimerComponent
       timeLeft={timeLeft}
-      workMinutes={workMinutes}
       start={start}
       stop={stop}
       reset={reset}
-      handleChangeTimeLeft={handleChangeTimeLeft}
+      inputValues={inputValues}
+      handleChange={handleChange}
     />
   );
 };
