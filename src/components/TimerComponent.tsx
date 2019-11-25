@@ -29,7 +29,7 @@ interface TimerProps {
   inputValues: {
     workMinutes: number;
     intervalMinutes: number;
-    repeatCount: number;
+    repeatCountMax: number;
   };
   handleChange: (targetName: string, newValue: number) => void;
 }
@@ -67,7 +67,7 @@ const TimerComponent: FC<TimerProps> = ({
             handleChange={handleChange}
             targetName="repeatCount"
             label="Repeat"
-            value={inputValues.repeatCount}
+            value={inputValues.repeatCountMax}
           />
         </CardContent>
         <CardActions>
