@@ -8,6 +8,8 @@ const useTimer = (
   repeatCountMax: number,
 ): [
   number,
+  boolean,
+  number,
   () => void,
   () => void,
   () => void,
@@ -84,7 +86,16 @@ const useTimer = (
     }
   }, [isWorkTime]); //eslint-disable-line
 
-  return [timeLeft, start, stop, reset, inputValues, handleChange];
+  return [
+    timeLeft,
+    active,
+    repeatCount,
+    start,
+    stop,
+    reset,
+    inputValues,
+    handleChange,
+  ];
 };
 
 const TimerContainer: FC = () => {
@@ -92,15 +103,21 @@ const TimerContainer: FC = () => {
   const INTERVAL_MINUTES = 5;
   const REPEAT = 4;
 
-  const [timeLeft, start, stop, reset, inputValues, handleChange] = useTimer(
-    WORK_MINUTES,
-    INTERVAL_MINUTES,
-    REPEAT,
-  );
+  const [
+    timeLeft,
+    active,
+    repeatCount,
+    start,
+    stop,
+    reset,
+    inputValues,
+    handleChange,
+  ] = useTimer(WORK_MINUTES, INTERVAL_MINUTES, REPEAT);
 
   return (
     <TimerComponent
       timeLeft={timeLeft}
+      active={active}
       start={start}
       stop={stop}
       reset={reset}
