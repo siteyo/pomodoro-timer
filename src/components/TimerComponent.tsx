@@ -23,6 +23,7 @@ const useStyles = makeStyles({
 
 interface TimerProps {
   timeLeft: number;
+  active: boolean;
   start: () => void;
   stop: () => void;
   reset: () => void;
@@ -36,6 +37,7 @@ interface TimerProps {
 
 const TimerComponent: FC<TimerProps> = ({
   timeLeft,
+  active,
   start,
   stop,
   reset,
@@ -55,25 +57,30 @@ const TimerComponent: FC<TimerProps> = ({
             handleChange={handleChange}
             targetName="workMinutes"
             label="Work [min]"
+            disabled={active}
             value={inputValues.workMinutes}
           />
           <TextFieldComponent
             handleChange={handleChange}
             targetName="intervalMinutes"
             label="Interval [min]"
+            disabled={active}
             value={inputValues.intervalMinutes}
           />
           <TextFieldComponent
             handleChange={handleChange}
             targetName="repeatCount"
             label="Repeat"
+            disabled={active}
             value={inputValues.repeatCountMax}
           />
         </CardContent>
         <CardActions>
           <Button onClick={start}>Start</Button>
           <Button onClick={stop}>Stop</Button>
-          <Button onClick={reset}>Reset</Button>
+          <Button onClick={reset} disabled={active}>
+            Reset
+          </Button>
         </CardActions>
       </Card>
     </>
