@@ -7,6 +7,7 @@ interface TextFieldProps {
   handleChange: (targetName: string, newValue: number) => void;
   targetName: string;
   label: string;
+  disabled: boolean;
   value?: number;
 }
 
@@ -23,6 +24,7 @@ const TextFieldComponent: FC<TextFieldProps> = ({
   handleChange,
   targetName,
   label,
+  disabled,
   value = 0,
 }) => {
   const classes = useStyles();
@@ -32,6 +34,7 @@ const TextFieldComponent: FC<TextFieldProps> = ({
       className={classes.textField}
       label={label}
       type="number"
+      disabled={disabled}
       onChange={event => handleChange(targetName, Number(event.target.value))}
       defaultValue={value}
     />
